@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
 type RecordItem = {
   id: string;
   filename: string;
@@ -18,12 +19,14 @@ export default function Home() {
   const [search, setSearch] = useState<string>('');
   const [items, setItems] = useState<RecordItem[]>([]);
   const [loading, setLoading] = useState(false);
-  async function refresh() {
+  const refresh = useCallback(async () => {
     const res = await fetch('/api/search?query=' + encodeURIComponent(search));
     const data = await res.json();
     setItems(data.items || []);
-  }
-  useEffect(() => { refresh(); }, [search]);
+  }, [search]);
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!file) return;
@@ -79,7 +82,13 @@ export default function Home() {
         {items.map(it => (
           <div key={it.id} className="card">
             <div style={{display:'flex',gap:12}}>
-              <img src={it.path.replace(/^\./,'')} alt={it.title || it.filename} width={96} height={96} style={{objectFit:'cover',borderRadius:8}}/>
+              <Image
+                src={it.path.replace(/^\./,'')}
+                alt={it.title || it.filename}
+                width={96}
+                height={96}
+                style={{objectFit:'cover',borderRadius:8}}
+              />
               <div style={{flex:1}}>
                 <div style={{fontWeight:600}}>{it.title || it.filename}</div>
                 <div style={{fontSize:12,color:'#6b7280'}}>{new Date(it.createdAt).toLocaleString()}</div>
