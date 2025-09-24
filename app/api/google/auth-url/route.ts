@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server'
-import { getOAuthClient } from '../../../lib/googleDrive'
+import { getOAuthClient } from '@/lib/googleDrive'
 export async function GET() {
   const oauth2Client = getOAuthClient()
   const scopes = ['https://www.googleapis.com/auth/drive.file','https://www.googleapis.com/auth/drive.metadata']
